@@ -31,8 +31,21 @@ public class BallController : MonoBehaviour
     //ボールを投げる処理
     private void ThrowBall()
     {
+        //連続投球を防ぐ
         hasThrown = true;
 
         rb.AddForce(Vector3.forward * throwforce, ForceMode.Impulse);
+
+        //ゲームマネージャーに投球を通知
+        BowlingGameManager.Instance.OnBallThrown();
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        //投球後にボールがピンに衝突したか確認
+        if (hasThrown && collision.collider.GetComponent<PinController>() != null)
+        {
+            BowlingGameManager.Instance.OnFirstPinHit();
+        }
     }
 }
